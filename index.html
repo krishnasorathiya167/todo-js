@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <div class="container">
+       <div class="main">
+        <div class="demo">
+            <h1 class="todo">TODO LIST</h1>
+            <input type="text" id="name" class="name" />
+            <button onclick="additem()" class="btn" id="btn">ADD</button><br><br>
+        </div>
+
+        <table border="1px" cellpadding="10px" cellspacing="0">
+            <thead>
+                <tr align="center">
+                    <td>Checkbox</td>
+                    <td width="180px">Name</td>
+                    <td width="70px">Delete</td>
+
+                </tr>
+            </thead>
+            <tbody id="data"></tbody>
+        </table>
+        <br><br>
+        <div class="status">
+            <div class="complete-task">
+                <!-- Completed : <span id="complete-count">0</span>
+            Active : <span id="active-count">0</span> -->
+                All : <span id="all-count">0</span>
+            </div>
+
+        </div>
+       </div>
+
+    </div>
+    <script>
+
+        let item = [];
+        let complete = [];
+        let active = [];
+
+        let tbody = document.getElementById("data");
+        let isUpdating = false;
+
+        function additem(ind) {
+            let name = document.getElementById("name").value;
+            document.getElementById("name").value = "";
+
+            if (isUpdating) {
+                item[ind] = name;  // Update item  
+                isUpdating = false;
+            }
+            else {
+                item = [...item, name];  // Add a new item
+                let count = document.getElementById("all-count").innerHTML = item.length;
+            }
+            console.log("name", item);
+            displayitems(item);
+
+        }
+
+        function handleUpdate(ind) {
+            document.getElementById(`valuename${ind}`).style.display = 'none'
+            document.getElementById(`updatename${ind}`).removeAttribute("hidden")
+            document.getElementById(`updatename${ind}`).value = item[ind]
+            document.getElementById(`updatename${ind}`).addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    console.log("object")
+                    updatedata(ind, event.target.value)
+                }
+            })
+        }
+
+        function displayitems(data) {
+            let count = document.getElementById("all-count").innerHTML = item.length;
+            let id;
+            tbody.innerHTML = ""
+            data.map((val, ind) => {
+                let tr = document.createElement("tr");
+                tr.innerHTML = `<td><input type="checkbox" id="check${ind}" onclick=checkdata(${ind})></td>
+                                <td  width="150px" onClick=handleUpdate(${ind})>
+                                    <span id="valuename${ind}"> ${val}</span>                              
+                                    <input type="text" hidden id="updatename${ind}"></td>
+                                <td width="70px"><button onclick=deletedata(${ind})>delete</button></td> `
+                tbody.appendChild(tr);
+            })
+
+        }
+
+        let addinput = document.getElementById("name");
+        addinput.addEventListener('keyup', (event) => {
+            if (event.key === "Enter") {
+                additem();
+            }
+        });
+
+        let checkdata = (ind) => {
+            let checkbox = document.getElementById(`check${ind}`);
+            let valuename = document.getElementById(`valuename${ind}`);
+            if (checkbox.checked) {
+                console.log(checkbox.checked);
+                valuename.style.textDecoration = "line-through";
+                valuename.style.color = "grey";
+            } else {
+                valuename.style.textDecoration = "none";
+                valuename.style.color = "black";
+            }
+        }
+
+        let updatedata = (ind, value) => {
+            let updatename = document.getElementById(`updatename${ind}`).value = value;
+            console.log(updatename);
+            item.with(ind, value)
+            item[ind] = updatename;
+            isUpdating = true;
+            displayitems(item);
+        }
+
+        let deletedata = (ind) => {
+            console.log(ind);
+            let items = item[ind];
+            let result = item.filter((val) => val != items);
+            item = result;
+            displayitems(item);
+        }
+
+    </script>
+</body>
+
+</html>
